@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron" style="text-align:center">
+    <h2>Librery Management System</h2>
+
+</div>
+
+<div class="card" id="bookListId">
+    <h3 class="card-title " style="margin:1rem">Trash Book Info</h3>
+
+    <div class="card-body" style="overflow-x:auto;height:300px">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Serial</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookListView">
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script>
+
+    loadBookList();
+    function loadBookList() {
+
+        $.get("/TrashUser/TrashUserList", function (data, status) {
+            debugger;
+            $('#bookListView').empty();
+            bookData = JSON.parse(data);
+
+            let len = bookData.data.length;
+
+            //booK_AUTHOR_NAME
+            //booK_GENRE
+            //booK_ID
+            //booK_NAME
+            //id
+
+            if (len == 0) {
+                $('#bookListView').append('<tr>'
+                    + '<td colspan="10">'
+                    + '<div class="bg-secondary p-3 rounded">'
+                    + '<h5 class="font-size-14" style="text-align:center"> Sorry, No User Found!!</h5>'
+                    + ' </div>'
+                    + '</td>'
+                    + '</tr>');
+            }
+            else {
+
+                for (i = 0; i < len; i++) {
+                    var j = i + 1;
+                    $('#bookListView').append('<tr>'
+                        + '<td> ' + j + ' </td>'
+                        + '<td> ' + bookData.data[i].fulL_NAME + ' </td>'
+                        + '<td> ' + bookData.data[i].useR_EMAIL + ' </td>'
+                        + '<td> ' + bookData.data[i].useR_LOGIN_NAME + ' </td>'
+                        + '<td> <button class="btn btn-info" style="margin:.5rem" onclick="RestoreTrashBook(' + bookData.data[i].id + ')">Restore</button> </td>'
+                        + '</tr>');
+
+                }
+            }
+        });
+    }
+
+
+    function RestoreTrashBook(id) {
+        debugger
+
+        $.post("/TrashUser/RestoreTrashUser", { "id": id }, function (data) {
+            debugger;
+            loadBookList();
+        });
+
+    }
+
+
+
+</script>
+

@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" integrity="sha512-OdEXQYCOldjqUEsuMKsZRj93Ht23QRlhIb8E/X0sbwZhme8eUw6g8q7AdxGJKakcBbv7+/PX0Gc2btf7Ru8cZA==" crossorigin="anonymous" />
+    <meta charset="utf-8" />
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title | Librery Management System</title>
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body style="background-color:#ccd3de">
+
+    <nav class="navbar navbar-default bg-dark">
+
+        <h3>
+            <span class="navbar-text" style="margin:.2rem; color:white">
+                <a href="@Url.Action("Index", "Book")"><i class="fas fa-book">Home |</i></a>
+            </span>
+            @if (Session["UserRole"].ToString() == "ADMIN")
+            {
+                <span class="navbar-text" style="margin:.2rem; color:white">
+                    <a href="@Url.Action("Index", "User")"><i class="fas fa-book">User List |</i></a>
+                </span>
+                <span class="navbar-text" style="margin:.2rem; color:white">
+                    <a href="@Url.Action("Index", "TrashBook")"><i class="fas fa-trash">Trash Book List |</i></a>
+                </span>
+                <span class="navbar-text" style="margin:.2rem; color:white">
+                    <a href="@Url.Action("Index", "TrashUser")"><i class="fas fa-trash">Trash User List |</i></a>
+                </span>
+            }
+            <span class="navbar-text" style="margin:.2rem; color:white">
+                <i class="fa fa-user"> </i> @Session["userLoginName"].ToString() |
+            </span>
+            <span class="navbar-text" style="margin:.2rem; color:white">
+                <a href="@Url.Action("Logout", "Login")"><i class="fas fa-sign-out-alt"></i></a>
+            </span>
+
+
+        </h3>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+
+
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
+<script>
+
+
+</script>

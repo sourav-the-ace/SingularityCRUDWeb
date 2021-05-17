@@ -1,0 +1,119 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_AccessLayout.cshtml";
+}
+
+
+<br />
+<br />
+
+<div class="card col-6" style="padding-top:20px;margin:auto">
+    <div class="card-body">
+        <h2 class="card-title mb-4 " style="text-align:center" >Login</h2>
+        <form class="mr-4 mb-4">
+            <div class="form-group">
+                <label for="email">User Name</label>
+                <input type="text" class="form-control " id="email" aria-describedby="emailHelp" placeholder="Enter User Name">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control " id="password" placeholder="Password">
+            </div>
+
+
+            <br />
+            <div style="text-align:center">
+                <button class="btn btn-primary" id="submit" onclick="loginUser()">Submit</button><br/>
+                <small> Don't have an account? @Html.ActionLink("Registration", "Index", "Registration") </small>
+            </div>
+
+        </form>
+        
+
+    </div>
+
+</div>
+
+
+<script>
+    debugger;
+
+    let email = "";
+    let password = "";
+    var UserDataObject = {};
+
+
+
+    function loginUser() {
+
+        debugger
+        email = $('#email').val();
+        password = $('#password').val();
+
+
+        if (email != "" && password != "") {
+
+            UserDataObject["email"] = email;
+            UserDataObject["password"] = password;
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/Login/LoginData",
+            //    data: JSON.stringify(UserDataObject),
+            //    contentType: "application/json; charset=utf-8",
+            //    dataType: "json",
+            //    async: false,
+            //    success: function (data) {
+            //        debugger;
+            //        window.location.href = "/Book/Index", true;
+            //        debugger;
+            //    }
+
+
+
+            //});
+
+
+            $.post("/Login/LoginData", { UserDataObject: UserDataObject }, function (result) {
+                debugger;
+
+              // window.location.href = "/";
+
+                if (result.includes("Success")) {
+                    window.location.href = "/";
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'Logged In!',
+                        showConfirmButton: false,
+                    });
+                    setTimeout(function () {
+                        console.log("before")
+                        window.location.href = "/";
+                        console.log("before")
+                    },4000)
+                    
+                }
+                else {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: 'Failed!',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+                    setTimeout(ppq, 3000)
+                    function ppq() {
+                        window.location.href = "/Book";
+                    }
+                }
+            });
+
+        } 
+
+    }
+
+      
+</script>
+

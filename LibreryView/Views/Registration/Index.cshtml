@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewBag.Title = "Registration";
+    Layout = "~/Views/Shared/_AccessLayout.cshtml";
+    
+}
+<br />
+<br />
+<div class="card col-6" style="padding-top:20px;margin:auto">
+    <div class="card-body">
+        <h2 class="card-title mb-2 " style="text-align:center">Registration</h2>
+        <form class="mr-4 mb-4 ">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" class="form-control " id="fullName" aria-describedby="emailHelp" placeholder="Enter email">
+            </div>
+            <div class="form-group" style="justify-content:center">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control " id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="loginName">Login Name</label>
+                <input type="text" class="form-control " id="loginName" aria-describedby="emailHelp" placeholder="Enter email">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Type</label>
+                <select class="form-control" id="userType">
+                    <option value="USER">User</option>
+                    <option value="ADMIN">Admin</option>
+                </select>
+            </div>
+            <br />
+            <div style="text-align:center">
+                <button type="submit" class="btn btn-primary" id="submit">Submit</button><br/>
+                <small> Alreary have an account? @Html.ActionLink("Login","Login","Login") </small>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+    debugger
+
+    let email = "";
+    let fullName = "";
+    let loginName = "";
+    let password = "";
+    var UserDataObject = {};
+
+    $('#submit').click(function () {
+
+
+        fullName = $('#fullName').val();
+        email = $('#email').val();
+        loginName = $('#loginName').val();
+        password = $('#password').val();
+        userType = $('#userType').val();
+
+
+        if (email != "" && password != "") {
+
+            UserDataObject["FullName"] = fullName;
+            UserDataObject["Email"] = email;
+            UserDataObject["LoginName"] = loginName;
+            UserDataObject["Password"] = password;
+            UserDataObject["UserType"] = userType;
+            $.ajax({
+                type: "POST",
+                url: "/Registration/RegistrationData",
+                data: JSON.stringify(UserDataObject),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    var response = JSON.parse(data);
+
+                }
+            });
+            
+        }
+
+    });
+
+
+
+
+</script>
+

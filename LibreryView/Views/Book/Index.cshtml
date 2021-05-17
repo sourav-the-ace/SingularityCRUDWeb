@@ -1,0 +1,204 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron" style="text-align:center">
+    <h2>Librery Management System</h2>
+   
+</div>
+
+<div class="card" id="bookListId">
+    <h3 class="card-title " style="margin:1rem">Book Info</h3>
+
+    <div class="card-body" style="overflow-x:auto;height:300px">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">Serial</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Genre</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookListView">
+            </tbody>
+        </table>
+
+    </div>
+    <footer>
+        <button class="btn btn-primary col-sm-2 media-right" style="margin:1rem" onclick="location.href='@Url.Action("Index", "AddBook")';">Add Book</button>
+    </footer>
+
+</div>
+
+
+<div class="card" style="padding-top:20px;padding-bottom:20px;margin:auto;display:none" id="bookEditId">
+    <div class="card-body text-justify">
+        <h2 class="card-title mb-4 " style="text-align:center">Edit Book Details</h2>
+        <form class="mr-4 mb-4">
+            <div class="col " style="margin:auto">
+                <div class="form-group">
+                    <label for="email">Book Name</label>
+                    <input type="text" style="justify-content:center" class="form-control" id="bookName" placeholder="Enter Book Name">
+                </div>
+                <div class="form-group">
+                    <label for="password">Author Name</label>
+                    <input type="text" class="form-control " id="bookAuthor" placeholder="Enter Author Name">
+                </div>
+                <div class="form-group">
+                    <label for="password">Genre</label>
+                    <input type="text" class="form-control " id="bookGenre" placeholder="Enter Genre Name">
+                </div>
+            </div>
+            <br />
+            <div style="text-align:center">
+                <button type="submit" class="btn btn-success" id="submit">Submit</button>
+                <button type="submit" class="btn btn-danger" id="Cancel">Cancel</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script>
+
+    var bookData = {};
+    var UserDataObject = {};
+    var bookId = "";
+
+    loadBookList();
+
+    
+
+
+
+    
+    function DeleteBook(id) {
+        debugger
+
+        $.post("/AddBook/DeleteBookInfo", { "id": id }, function (data) {
+            debugger;
+            loadBookList();
+        });
+
+    }
+
+
+    function EditBook(id) {
+
+        $('#bookListId').hide();
+        $('#bookEditId').show();
+        var bookName = "";
+        var authorName = "";
+        var genre = "";
+
+        for (i = 0; i < bookData.length; i++) {
+            debugger
+            var p = bookData[i].id;
+            if (p == id) {
+                bookId = p;
+                bookName = bookData[i].booK_NAME;
+                authorName = bookData[i].booK_AUTHOR_NAME;
+                genre = bookData[i].booK_GENRE;
+            }
+
+        }
+
+        debugger;
+        $('#bookName').empty();
+        $('#bookAuthor').empty();
+        $('#bookGenre').empty();
+        
+        $('#bookName').val(bookName);
+        $('#bookAuthor').val(authorName);
+        $('#bookGenre').val(genre);
+    }
+
+
+    $('#submit').click(function () {
+        debugger
+        bookName = $('#bookName').val();
+        bookAuthor = $('#bookAuthor').val();
+        bookGenre = $('#bookGenre').val();
+
+
+        if (bookName != "" && bookAuthor != "" && bookGenre != "") {
+            debugger;
+            UserDataObject["id"] = bookId;
+            UserDataObject["bookName"] = bookName;
+            UserDataObject["bookAuthor"] = bookAuthor;
+            UserDataObject["bookGenre"] = bookGenre;
+            bookId = "";
+            $.ajax({
+                type: "POST",
+                url: "/AddBook/UpdatedBookInfo",
+                data: JSON.stringify(UserDataObject),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    var response = JSON.parse(data);
+                    loadBookList();
+                    $('#bookListId').show();
+                    $('#bookEditId').hide();
+
+                }
+            });
+
+        }
+
+    });
+
+
+    $('#Cancel').click(function () {
+        $('#bookListId').show();
+        $('#bookEditId').hide();
+    });
+
+
+    function loadBookList() {
+
+        $.get("Book/BookList", function (data, status) {
+            debugger;
+            $('#bookListView').empty();
+            bookData = JSON.parse(data);
+
+            let len = bookData.length;
+
+            //booK_AUTHOR_NAME
+            //booK_GENRE
+            //booK_ID
+            //booK_NAME
+            //id
+
+            if (len == 0) {
+                $('#bookListView').append('<tr>'
+                    + '<td colspan="10">'
+                    + '<div class="bg-secondary p-3 rounded">'
+                    + '<h5 class="font-size-14" style="text-align:center"> Sorry, No Book Found!!</h5>'
+                    + ' </div>'
+                    + '</td>'
+                    + '</tr>');
+            }
+            else {
+
+                for (i = 0; i < len; i++) {
+                    var j = i + 1;
+                    $('#bookListView').append('<tr>'
+                        + '<td> ' + j + ' </td>'
+                        + '<td> ' + bookData[i].booK_NAME + ' </td>'
+                        + '<td> ' + bookData[i].booK_AUTHOR_NAME + ' </td>'
+                        + '<td> ' + bookData[i].booK_GENRE + ' </td>'
+                        + '<td> <button class="btn btn-info" style="margin:.5rem" onclick="EditBook(' + bookData[i].id + ')">Edit</button><button class="btn btn-danger" onclick = "DeleteBook(' + bookData[i].id + ')">Delete</button> </td>'
+                        + '</tr>');
+
+                }
+            }
+        });
+    }
+    
+
+</script>

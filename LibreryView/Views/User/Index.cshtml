@@ -1,0 +1,198 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="jumbotron" style="text-align:center">
+    <h2>Librery Management System</h2>
+
+</div>
+
+<div class="card" id="userListId">
+    <h3 class="card-title " style="margin:1rem">Book Info</h3>
+
+    <div class="card-body" style="overflow-x:auto;height:300px">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">User Id</th>
+                    <th scope="col">Full NAME</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Login Name</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody id="UserListView">
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<div class="card" style="padding-top:20px;padding-bottom:20px;margin:auto;display:none" id="userEditId">
+    <div class="card-body text-justify">
+        <h2 class="card-title mb-4 " style="text-align:center">Edit Book Details</h2>
+        <form class="mr-4 mb-4">
+            <div class="col " style="margin:auto">
+                <div class="form-group">
+                    <label for="email">User Name</label>
+                    <input type="text" style="justify-content:center" class="form-control" id="bookName" placeholder="Enter User Name">
+                </div>
+                <div class="form-group">
+                    <label for="password">User Email</label>
+                    <input type="text" class="form-control " id="bookAuthor" placeholder="Enter User Email">
+                </div>
+                <div class="form-group">
+                    <label for="password">User Login Name</label>
+                    <input type="text" class="form-control " id="bookGenre" placeholder="Enter Login Name">
+                </div>
+            </div>
+            <br />
+            <div style="text-align:center">
+                <button type="submit" class="btn btn-success" id="submit">Submit</button>
+                <button type="submit" class="btn btn-danger" id="Cancel">Cancel</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script>
+
+    var userData = {};
+    var UserDataObject = {};
+    var bookId = "";
+
+    loadUserList();
+
+
+    function loadUserList() {
+        debugger
+        $.get("User/GetUserList", function (data, status) {
+            debugger;
+            $('#UserListView').empty();
+            userData = JSON.parse(data);
+            debugger;
+            let len = userData.data.length;
+
+            //booK_AUTHOR_NAME
+            //booK_GENRE
+            //booK_ID
+            //booK_NAME
+            //id
+
+            if (len == 0) {
+                $('#UserListView').append('<tr>'
+                    + '<td colspan="10">'
+                    + '<div class="bg-secondary p-3 rounded">'
+                    + '<h5 class="font-size-14" style="text-align:center"> Sorry, No User Found!!</h5>'
+                    + ' </div>'
+                    + '</td>'
+                    + '</tr>');
+            }
+            else {
+
+                for (i = 0; i < len; i++) {
+                    debugger;
+                    var p = userData.data[i].fulL_NAME;
+                    var j = i + 1;
+                    $('#UserListView').append('<tr>'
+                        + '<td> ' + j + ' </td>'
+                        + '<td> ' + userData.data[i].fulL_NAME + ' </td>'
+                        + '<td> ' + userData.data[i].useR_EMAIL + ' </td>'
+                        + '<td> ' + userData.data[i].useR_LOGIN_NAME + ' </td>'
+                        + '<td> <button class="btn btn-info" style="margin:.5rem" onclick="EditUser(' + userData.data[i].id + ')">Edit</button><button class="btn btn-danger" onclick = "DeleteUser(' + userData.data[i].id + ')">Delete</button> </td>'
+                        + '</tr>');
+
+                }
+            }
+        });
+    }
+
+
+    function DeleteUser(id) {
+        debugger
+
+        $.post("/User/DeleteUserInfo", { "id": id }, function (data) {
+            debugger;
+            loadUserList();
+        });
+
+    }
+
+    function EditUser(id) {
+        debugger;
+        $('#userListId').hide();
+        $('#userEditId').show();
+        var userId = "";
+        var username = "";
+        var userEmail = "";
+        var userLoginName = "";
+
+        for (i = 0; i < userData.data.length; i++) {
+            debugger
+            var p = userData.data[i].id;
+            if (p == id) {
+                bookId = p;
+                bookName = userData.data[i].fulL_NAME;
+                authorName = userData.data[i].useR_EMAIL;
+                genre = userData.data[i].useR_LOGIN_NAME;
+            }
+
+        }
+
+        debugger;
+        $('#bookName').empty();
+        $('#bookAuthor').empty();
+        $('#bookGenre').empty();
+
+        $('#bookName').val(bookName);
+        $('#bookAuthor').val(authorName);
+        $('#bookGenre').val(genre);
+    }
+
+
+    $('#submit').click(function () {
+        debugger
+        bookName = $('#bookName').val();
+        bookAuthor = $('#bookAuthor').val();
+        bookGenre = $('#bookGenre').val();
+
+
+        if (bookName != "" && bookAuthor != "" && bookGenre != "") {
+            debugger;
+            UserDataObject["Id"] = bookId;
+            UserDataObject["FullName"] = bookName;
+            UserDataObject["Email"] = bookAuthor;
+            UserDataObject["LoginName"] = bookGenre;
+            bookId = "";
+            $.ajax({
+                type: "POST",
+                url: "/User/UpdatedUserInfo",
+                data: JSON.stringify(UserDataObject),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data) {
+                    debugger;
+                    var response = JSON.parse(data);
+                    loadBookList();
+                    $('#userListId').show();
+                    $('#userEditId').hide();
+
+                }
+            });
+
+        }
+
+    });
+
+
+    $('#Cancel').click(function () {
+        $('#userListId').show();
+        $('#userEditId').hide();
+    });
+
+</script>
